@@ -1,6 +1,5 @@
 const exp = require("constants");
 const { Food } = require("./food.js");
-const { Snake } = require("./snake");
 
 class Game {
   #snake
@@ -26,25 +25,31 @@ class Game {
     return new Food(x, y, foodValue);
   };
 
+  #updateGameState() {
+    this.#snake.increaseLength(this.#food.getFoodValue());
+    this.#snake.increaseSpeed();
+    this.#food = this.#generateNewFood();
+  }
+
   #hasEatenFood() {
     const snakePos = this.#snake.position();
     const foodPos = this.#food.position();
-    console.log(snakePos, foodPos);
-    const arePositionsSame = (snakePos.x === foodPos.x) && (snakePos.y === foodPos.y);
-    if (arePositionsSame) {
-      this.#snake.increaseLength(this.#food.getFoodValue());
-      this.#snake.increaseSpeed();
-      this.#food = this.#generateNewFood();
-    }
+    return (snakePos.x === foodPos.x) && (snakePos.y === foodPos.y);
   };
 
   controller() {
     this.#snake.moveRight();
-    this.#hasEatenFood();
+    if (this.#hasEatenFood()) {
+      this.#updateGameState();
+    };
     this.#snake.moveRight();
-    this.#hasEatenFood();
+    if (this.#hasEatenFood()) {
+      this.#updateGameState();
+    };
     this.#snake.moveUp();
-    this.#hasEatenFood();
+    if (this.#hasEatenFood()) {
+      this.#updateGameState();
+    };
   }
 };
 
